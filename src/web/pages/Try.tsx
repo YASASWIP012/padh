@@ -37,11 +37,13 @@ export function TryPage({ embedded = false, initialLang = 'en' }: { embedded?: b
   const [pending, setPending] = useState<Recording | null>(null);
   const [err, setErr] = useState('');
   const [example, setExample] = useState<Example | null>(null);
+  const [showPlan, setShowPlan] = useState(false);
 
   useEffect(() => {
     setResult(null);
     setErr('');
     setPending(null);
+    setShowPlan(false);
     api.passage(lang, level, 'C').then(setPassage).catch(() => setErr('Could not load the passage. Check your connection and reload.'));
   }, [lang, level]);
 
@@ -140,7 +142,7 @@ export function TryPage({ embedded = false, initialLang = 'en' }: { embedded?: b
         <div class="reader col" style="gap:8px">
           <span class="eyebrow"><span class="dot" />Tomorrow's 10 minutes</span>
           <p class="t-small">Practice built around <span class="indic" lang={lang}>{Object.keys(result.score.missedAksharas).slice(0, 3).join(', ')}</span>, at this reader's level.</p>
-          <a class="src" href="#/try">See the full practice plan</a>
+          {showPlan ? <PracticePlan lang={lang} level={level} missed={result.score.missedAksharas} /> : <button class="btn btn-outline btn-sm" style="justify-self:start" onClick={() => setShowPlan(true)}>Show tomorrow's 10 minutes</button>}
         </div>
       )}
     </div>

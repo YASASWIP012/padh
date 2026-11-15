@@ -18,10 +18,13 @@ export function modelReady(env: LlmEnv): boolean {
 }
 
 /** The request in the same shape the AgentFoundry eval cases use. Only target words reach the model, never child data. */
-export function draftPrompt(lang: Lang, level: Level, t: PracticeTargets, exampleText: string, feedback?: string[]): string {
+export function draftPrompt(lang: Lang, level: Level, t: PracticeTargets, exampleText: string, feedback?: string[], avoid: string[] = []): string {
+  const range = level === 'story' ? '35 to 50' : level === 'word' ? '10 to 16' : '25 to 35';
   return [
     `Language: ${LANG_NAME[lang]}.${level === 'story' ? ' Write a story.' : level === 'word' ? ' Write only 2 or 3 very short sentences.' : ''}`,
+    `Use between ${range} words.`,
     `Target words: ${t.words.join(', ') || '(none)'}.`,
+    avoid.length ? `Do not use these words: ${avoid.slice(0, 40).join(', ')}.` : '',
     t.aksharas.length ? `Target aksharas: ${t.aksharas.join(', ')}.` : '',
     `Sample of the words this child meets in class: ${exampleText}`,
     feedback?.length ? `A checker rejected the last draft: ${feedback.join('; ')}. Fix that.` : '',

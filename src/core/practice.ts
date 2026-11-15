@@ -105,7 +105,7 @@ const LENGTH: Record<Level, [number, number]> = {
   letter: [20, 40],
   word: [8, 18],
   para: [20, 40],
-  story: [35, 70],
+  story: [25, 60],
 };
 
 export interface Check {
@@ -132,7 +132,9 @@ export function checkPracticeText(text: string, lang: Lang, level: Level, target
   if (wrongScript.length) problems.push(`wrong script: ${wrongScript.slice(0, 3).join(' ')}`);
   const known = tokens.filter((t) => knownWords.has(t) || targets.words.includes(t)).length;
   const coverage = tokens.length ? known / tokens.length : 0;
-  if (coverage < 0.8) problems.push(`only ${Math.round(coverage * 100)}% familiar words`);
+  // Telugu words carry their endings, so fewer exact matches are expected.
+  const minCoverage = lang === 'te' ? 0.7 : 0.8;
+  if (coverage < minCoverage) problems.push(`only ${Math.round(coverage * 100)}% familiar words`);
   let targetHits = 0;
   for (const t of tokens) if (targets.aksharas.some((ak) => aksharas(t, lang).includes(ak))) targetHits++;
   if (targets.aksharas.length && targetHits < 4) problems.push(`target aksharas used only ${targetHits} times`);

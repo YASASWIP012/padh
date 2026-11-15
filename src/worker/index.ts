@@ -17,6 +17,13 @@ export interface Env extends LlmEnv, SpeechEnv {
 
 const app = new Hono<{ Bindings: Env }>();
 const LANGS: Lang[] = ['te', 'hi', 'en'];
+
+/** Short words every text needs. They never count as rehearsing a check passage. */
+const FUNCTION_WORDS: Record<Lang, string[]> = {
+  en: ['a', 'an', 'the', 'and', 'but', 'or', 'in', 'on', 'at', 'to', 'of', 'with', 'for', 'from', 'up', 'is', 'are', 'was', 'were', 'be', 'it', 'he', 'she', 'we', 'they', 'i', 'you', 'his', 'her', 'their', 'our', 'my', 'has', 'have', 'had', 'do', 'did', 'not', 'no', 'yes', 'this', 'that', 'there', 'then', 'very', 'all', 'too', 'so', 'run', 'sun', 'play', 'happy', 'big', 'little', 'day', 'go', 'went'],
+  hi: ['और', 'है', 'हैं', 'था', 'थी', 'थे', 'में', 'से', 'को', 'का', 'की', 'के', 'पर', 'ने', 'भी', 'तो', 'वह', 'वे', 'यह', 'हम', 'मैं', 'एक', 'बहुत', 'नहीं', 'जाता', 'जाती', 'गया', 'गई', 'रहा', 'रही', 'साथ'],
+  te: ['ఒక', 'మరియు', 'కూడా', 'చాలా', 'లో', 'ఉంది', 'ఉన్నాడు', 'ఉన్నారు', 'వచ్చింది', 'వెళ్ళింది', 'అతను', 'ఆమె', 'వాళ్ళు', 'మేము', 'నేను', 'అది', 'ఇది', 'కాదు', 'లేదు', 'రోజూ', 'అక్కడ', 'ఇక్కడ'],
+};
 const LEVELS: Level[] = ['letter', 'word', 'para', 'story'];
 const now = () => Date.now();
 const DAY = 86_400_000;
@@ -272,8 +279,9 @@ app.post('/api/plan', async (c) => {
 
   // Practice never uses a word that appears only in the check passages (forms A and B), so it cannot
   // rehearse the test. Words that also appear in the practice form C are everyday words and are allowed.
-  const formC = new Set(PASSAGES.filter((p) => p.lang === lang && p.form === 'C').flatMap((p) => tokenize(p.text, lang)));
-  const testWords = new Set(PASSAGES.filter((p) => p.lang === lang && p.form !== 'C').flatMap((p) => tokenize(p.text, lang)).filter((w) => !formC.has(w)));
+  // Everyday words (the practice form C, the word bank, and common function words) are allowed.
+  const everyday = new Set([...PASSAGES.filter((p) => p.lang === lang && p.form === 'C').flatMap((p) => tokenize(p.text, lang)), ...WORD_BANK[lang], ...FUNCTION_WORDS[lang]]);
+  const testWords = new Set(PASSAGES.filter((p) => p.lang === lang && p.form !== 'C').flatMap((p) => tokenize(p.text, lang)).filter((w) => !everyday.has(w)));
   const known = new Set<string>([...WORD_BANK[lang], ...PASSAGES.filter((p) => p.lang === lang && p.form === 'C').flatMap((p) => tokenize(p.text, lang))].filter((w) => !testWords.has(w)));
   const bankTargets = { aksharas: targets.aksharas, words: targets.words.filter((w) => !testWords.has(w)) };
   // Practice text sits one step above what the child already reads well.
@@ -285,7 +293,7 @@ app.post('/api/plan', async (c) => {
   let feedback: string[] | undefined;
   for (let attempt = 0; attempt < 3 && modelReady(c.env); attempt++) {
     try {
-      const draft = await draftText(c.env, draftPrompt(lang, practiceLevel, bankTargets, sample.text, feedback));
+      const draft = await draftText(c.env, draftPrompt(lang, practiceLevel, bankTargets, sample.text, feedback, [...testWords]));
       const check = checkPracticeText(draft, lang, practiceLevel, bankTargets, known, testWords);
       await c.env.DB.prepare('INSERT INTO drafts (id, lang, level, targets, text, ok, problems, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
         .bind(crypto.randomUUID(), lang, practiceLevel, JSON.stringify(bankTargets), draft, check.ok ? 1 : 0, JSON.stringify(check.problems), now()).run();

@@ -1,0 +1,1 @@
+{"date":"2026-11-15","recall":0.7592592592592593,"precision":0.7454545454545455,"found":41,"planted":54,"falseAlarms":14,"byKind":{"skip":{"found":16,"total":18},"swap":{"found":16,"total":18},"misread":{"found":9,"total":18}},"words":781}

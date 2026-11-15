@@ -78,9 +78,11 @@ function SignIn({ onIn, err }: { onIn: (a: { code: string; pin: string }) => voi
 
   return (
     <form class="reader col" style="max-width:520px" onSubmit={submit}>
+      <button type="button" class="btn btn-candy" onClick={() => onIn({ code: 'DEMO01', pin: '0000' })}>See the demo class (no sign-in)</button>
+      <p class="t-small">The demo class is read-only. Its children are made up and never counted on the evidence page.</p>
       <div class="segmented">
-        <button type="button" aria-selected={mode === 'in'} onClick={() => setMode('in')}>Open my class</button>
-        <button type="button" aria-selected={mode === 'new'} onClick={() => setMode('new')}>Start a new class</button>
+        <button type="button" aria-pressed={mode === 'in'} onClick={() => setMode('in')}>Open my class</button>
+        <button type="button" aria-pressed={mode === 'new'} onClick={() => setMode('new')}>Start a new class</button>
       </div>
       {mode === 'new' ? (
         <>
@@ -97,11 +99,7 @@ function SignIn({ onIn, err }: { onIn: (a: { code: string; pin: string }) => voi
       <div class="field"><label for="p">{mode === 'new' ? 'Choose a PIN (4 to 8 digits)' : 'PIN'}</label>
         <input id="p" class="input t-mono" inputMode="numeric" pattern="\d{4,8}" value={pin} onInput={(e) => setPin(e.currentTarget.value)} required /></div>
       {msg && <div class="error">{msg}</div>}
-      <button class="btn btn-candy" type="submit">{mode === 'new' ? 'Create class' : 'Open class'}</button>
-      <div class="muted-box row" style="justify-content:space-between">
-        <span>Just looking? Open a read-only demo class. Its children are made up and never counted on the evidence page.</span>
-        <button type="button" class="btn btn-outline btn-sm" onClick={() => onIn({ code: 'DEMO01', pin: '0000' })}>Open the demo class</button>
-      </div>
+      <button class="btn btn-ink" type="submit">{mode === 'new' ? 'Create class' : 'Open class'}</button>
     </form>
   );
 }
@@ -172,15 +170,15 @@ function Dashboard({ cls, auth, reload, onOut }: { cls: ClassView; auth: { code:
                   <td>{pre ? <span class="pill">{LEVEL_LABEL[pre.final_level!]}{preW !== null ? ` · ${preW} wcpm` : ''}</span> : <span class="t-micro">Not yet</span>}</td>
                   <td><span class="t-mono">{practice}</span></td>
                   <td>{post ? <span class={`pill ${ORDER.indexOf(post.final_level!) > ORDER.indexOf(pre?.final_level ?? 'beginner') || (postW ?? 0) > (preW ?? 0) ? 'pill--ok' : ''}`}>{LEVEL_LABEL[post.final_level!]}{postW !== null ? ` · ${postW} wcpm` : ''}</span> : <span class="t-micro">After 7+ days</span>}</td>
-                  <td style="text-align:right;white-space:nowrap">
-                    {!pre && <button class="btn btn-ink btn-sm" onClick={() => go(`/teacher/child/${c.id}/pre`)}>First check</button>}
-                    {pre && (c.arm === 'practice' || post) && <button class="btn btn-outline btn-sm" onClick={() => go(`/teacher/child/${c.id}/practice`)}>Practise</button>}
-                    {pre && !post && <> <button class="btn btn-ghost btn-sm" disabled={Date.now() - pre.created_at < cls.minGapDays * 86_400_000} title={`Opens ${cls.minGapDays} days after the first check`} onClick={() => go(`/teacher/child/${c.id}/post`)}>Second check</button></>}
+                  <td style="text-align:right"><div class="row" style="justify-content:flex-end;gap:6px">
+                    {!pre && !cls.demo && <button class="btn btn-ink btn-sm" onClick={() => go(`/teacher/child/${c.id}/pre`)}>First check</button>}
+                    {pre && !cls.demo && (c.arm === 'practice' || post) && <button class="btn btn-outline btn-sm" onClick={() => go(`/teacher/child/${c.id}/practice`)}>Practise</button>}
+                    {pre && !post && !cls.demo && <> <button class="btn btn-ghost btn-sm" disabled={Date.now() - pre.created_at < cls.minGapDays * 86_400_000} title={`Opens ${cls.minGapDays} days after the first check`} onClick={() => go(`/teacher/child/${c.id}/post`)}>Second check</button></>}
                     {!cls.demo && pre && !post && <> <button class="btn btn-ghost btn-sm" title="Log 10 minutes of adult time today" onClick={async () => { await api.logMinutes(auth.code, auth.pin, c.id, c.arm === 'practice' ? 'practice' : 'storybook', 10); reload(); }}>+10 min {c.arm === 'practice' ? 'practice' : 'storybook'}</button></>}
                     {!cls.demo && (removing === c.id
                       ? <> <button class="btn btn-sm" style="background:var(--miss);color:#fff" onClick={() => remove(c.id)}>Delete all of {c.nickname}'s data</button> <button class="btn btn-ghost btn-sm" onClick={() => setRemoving(null)}>Keep</button></>
                       : <> <button class="btn btn-ghost btn-sm" title="Parent withdrew consent" onClick={() => setRemoving(c.id)}>Withdraw</button></>)}
-                  </td>
+                  </div></td>
                 </tr>
               ))}
             </tbody>
@@ -237,7 +235,7 @@ function AddChild({ auth, lang, onDone, onCancel }: { auth: { code: string; pin:
     <form class="reader col" onSubmit={submit}>
       <h3>Add a child</h3>
       <div class="grid grid-3">
-        <div class="field"><label for="nn">Nickname (not the full name)</label><input id="nn" class="input" value={nickname} onInput={(e) => setNick(e.currentTarget.value)} required maxLength={40} /></div>
+        <div class="field"><label for="nn">Nickname (not the full name)</label><input id="nn" class="input" placeholder="e.g. Blue Kite" value={nickname} onInput={(e) => setNick(e.currentTarget.value)} required maxLength={40} /></div>
         <div class="field"><label for="gg">Class</label>
           <select id="gg" class="input" value={grade} onChange={(e) => setGrade(Number(e.currentTarget.value))}>{[1, 2, 3, 4, 5].map((g) => <option key={g} value={g}>Class {g}</option>)}</select></div>
         <div class="field"><label for="ll">Reads in</label>

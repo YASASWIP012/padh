@@ -15,7 +15,7 @@ export function Landing() {
       <section class="hero hero--split hero-cream" style="padding-bottom:var(--section-y)">
         <div class="container">
           <div>
-            <span class="badge"><span class="badge__tag">Pilot</span>Free, open source · school pilot starts November 2026</span>
+            <span class="badge"><span class="badge__tag">Pilot</span>Free, open source · school pilot being set up</span>
             <h1 style="margin-top:22px">Hear a child read. Find the <span class="hl">exact letters</span> they stumble on.</h1>
             <p class="lead" style="margin-top:22px">Three in four Class 3 children in government schools can't yet read a Class 2 story. Padh listens to a child read for one minute on any phone, marks every word, finds the letters they stumble on, and plans ten minutes of practice for tomorrow.</p>
             <div class="cta-row">

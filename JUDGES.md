@@ -6,7 +6,7 @@ No install, no login, no microphone needed.
 
 **2. Read it yourself (1 minute, optional).** Choose English and Paragraph, tap the orange button, read the passage aloud and tap again. "What the checker heard" shows the raw transcript, so you can see exactly why each word was marked as it was. Try skipping a word or misreading one.
 
-**3. The teacher's view (1 minute).** Go to Teachers and choose "Open the demo class". The children are made up, the class is read-only, and it is excluded from every public number. You will see:
+**3. The teacher's view (1 minute).** Go to Teachers and choose "See the demo class (no sign-in)". The children are made up, the class is read-only, and it is excluded from every public number. You will see:
 - each child's random group (practice or comparison)
 - their level at the first and second check
 - the heatmap of aksharas the class misreads most

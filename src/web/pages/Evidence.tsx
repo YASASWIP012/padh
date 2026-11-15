@@ -44,8 +44,12 @@ function AgreementBlock({ a }: { a: Agreement }) {
 }
 
 /** Public, live numbers. Everything here is computed from the database on each request. */
+interface Bench { date: string; recall: number; precision: number; found: number; planted: number; falseAlarms: number; byKind: Record<string, { found: number; total: number }> }
+
 export function EvidencePage() {
   const [d, setD] = useState<Impact | null>(null);
+  const [bench, setBench] = useState<Bench | null>(null);
+  useEffect(() => { fetch('/benchmark.json').then((r) => (r.ok ? (r.json() as Promise<Bench>) : null)).then(setBench).catch(() => setBench(null)); }, []);
   const [err, setErr] = useState('');
   useEffect(() => { api.impact().then(setD).catch((e: Error) => setErr(e.message)); }, []);
 
@@ -58,7 +62,7 @@ export function EvidencePage() {
       <div class="app-head"><div>
         <span class="eyebrow"><span class="dot" />Live · computed {new Date(d.updatedAt).toLocaleString()}</span>
         <h1 style="margin-top:10px">What happened, in numbers.</h1>
-        <p class="lead" style="margin-top:14px">Only children in real classes with a signed parent form are counted. Demo classes and people trying the site are kept out of every outcome here. <a class="src" href="/api/impact" target="_blank" rel="noopener">Raw numbers as JSON</a></p>
+        <p class="lead" style="margin-top:14px">Only children whose teacher confirmed a signed parent form are counted. Demo classes and people trying the site are kept out of every outcome here. <a class="src" href="/api/impact" target="_blank" rel="noopener">Raw numbers as JSON</a></p>
       </div></div>
 
       {!started && (
@@ -104,10 +108,24 @@ export function EvidencePage() {
         {d.agreementFlagged.recordings > 0 && <p class="t-small">On the {d.agreementFlagged.recordings} recordings Padh flagged as unsure, the word agreement was {pct(d.agreementFlagged.wordAgreement)}.</p>}
       </section>
 
+      {bench && (
+        <section class="reader col">
+          <span class="eyebrow"><span class="dot" />Computer voice, not children</span>
+          <h3>Can the pipeline find mistakes we planted on purpose?</h3>
+          <p class="t-small">A computer voice read all 18 paragraph and story passages with three mistakes planted in each: a skipped word, a swapped word and a word with a syllable dropped. Padh scored the recordings through the live pipeline on {bench.date}. Clear synthetic speech is the easy case, so treat this as a ceiling. Children's voices are measured by the blind checks above. <a class="src" href="https://github.com/YASASWIP012/padh/blob/main/docs/synthetic-benchmark.md" target="_blank" rel="noopener">Every passage, every result</a></p>
+          <div class="kpis">
+            <Kpi value={`${bench.found}/${bench.planted}`} label="planted mistakes found" waiting="" />
+            <Kpi value={pct(bench.precision)} label="of Padh's marks were real mistakes" waiting="" />
+            <Kpi value={`${bench.byKind.skip.found}/${bench.byKind.skip.total}`} label="skipped words found" waiting="" />
+            <Kpi value={`${bench.byKind.misread.found}/${bench.byKind.misread.total}`} label="dropped-syllable misreads found (the hard case)" waiting="" />
+          </div>
+        </section>
+      )}
+
       <section class="reader col">
         <span class="eyebrow"><span class="dot" />Practice texts</span>
         <h3>A model drafts each practice text, and code decides if a child sees it.</h3>
-        <p class="t-small">Every draft is checked in code: right script, right length, mostly familiar words, no word that appears only in the check passages, and enough practice of the target letters. Rejected drafts are logged and never shown to a child.</p>
+        <p class="t-small">Every draft is checked in code: right script, right length, mostly familiar words, no word that appears only in the check passages, and enough practice of the target letters. Rejected drafts are logged and never shown to a child. When every draft for a plan fails, the child gets a passage from the matched bank instead, so a low pass rate means the checker is strict, not that children go without practice.</p>
         <div class="kpis">
           <Kpi value={d.practiceDrafts.total || null} label="drafts written" waiting="Starts with the first practice plan" />
           <Kpi value={d.practiceDrafts.total ? d.practiceDrafts.passedChecker : null} label="passed every check" waiting="" />

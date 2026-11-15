@@ -61,6 +61,10 @@ Vaachan Samiksha (Gujarat) and IIT Bombay's TARA assess oral reading in schools.
 
 The practice writer is an AgentFoundry agent, with its manifest, prompt and a 13-case eval suite in `.codenow/agent-studio/`. Production uses the same prompt file, and a test fails if they drift apart. See [agentfoundry/README.md](agentfoundry/README.md).
 
+## Accuracy so far (computer voice, not children)
+
+A computer voice read all 18 paragraph and story passages with three mistakes planted in each, and the live pipeline scored them. Padh found 41 of 54 planted mistakes (76%), and 75% of the words it marked wrong were real mistakes. Skipped and swapped words were found 16 of 18 times each. A word with a syllable dropped was found 9 of 18 times, because the recogniser sometimes hears the word it expects. Telugu did best: all 18 planted mistakes were found. This is clear synthetic speech, so it is a ceiling; the blind checks in the pilot measure children's voices. Details: [docs/synthetic-benchmark.md](docs/synthetic-benchmark.md).
+
 ## Privacy and safeguarding
 
 - **No identifiers:** children are known by a nickname. Padh stores no full name, photo, phone number or Aadhaar.

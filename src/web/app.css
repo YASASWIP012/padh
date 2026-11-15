@@ -126,3 +126,20 @@ select.input{appearance:none;background-image:linear-gradient(45deg,transparent 
 .passage button:focus-visible,.w button:focus-visible{outline:2px solid var(--focus)!important;outline-offset:2px!important;border-radius:6px}
 
 .hero--split h1{font-size:clamp(38px,4.4vw,58px)}
+
+/* Phones: controls wrap instead of being clipped, the reading grid gets room, the nav stays reachable. */
+.segmented{flex-wrap:wrap;max-width:100%;border-radius:20px}
+@media (max-width:640px){
+  .segmented button{flex:1 1 auto;padding:0 10px}
+  .passage--grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .passage--grid span{overflow-wrap:anywhere}
+}
+@media (max-width:760px){
+  .nav__links{display:flex;margin-inline:0}
+  .nav__links a{padding:8px 7px;font-size:13.5px}
+  .nav__links a[href^="http"]{display:none}
+  .nav .btn-sm{display:none}
+}
+.table-wrap{-webkit-overflow-scrolling:touch}
+.table th,.eyebrow,.badge__tag,.heat small{font-size:13px}
+.pill{font-size:13px}
