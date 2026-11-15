@@ -35,12 +35,13 @@ export function Landing() {
           <div class="section-head">
             <span class="eyebrow"><span class="dot" />The problem</span>
             <h2>Most children in Class 3 can't yet read a Class 2 story.</h2>
+            <p class="lead">There are 10.44 crore children in Classes 1 to 5, and two-thirds of Class 1 and 2 classrooms hold more than one class at a time. Nobody has time to listen to each child read. <a class="src" href="https://educationforallinindia.com/analysis-of-udise-2024-25-data-by-prof-arun-c-mehta/" target="_blank" rel="noopener">UDISE+ 2024-25</a> · <a class="src" href="https://asercentre.org/wp-content/uploads/2022/12/ASER-2024-National-findings.pdf" target="_blank" rel="noopener">ASER 2024, p. 49</a></p>
           </div>
           <div class="statline">
             <div class="stat">
               <b>23.4%</b>
               <p>of Class 3 children in government schools could read a Class 2 text in 2024. Three out of four could not.</p>
-              <a href="https://www.millenniumpost.in/big-stories/aser-2024-reading-arithmetic-skills-improve-among-class-3-and-5-students-led-by-govt-schools-596643" target="_blank" rel="noopener">ASER 2024, via Millennium Post</a>
+              <a href="https://asercentre.org/wp-content/uploads/2022/12/ASER-2024-National-findings.pdf" target="_blank" rel="noopener">ASER 2024 national findings, p. 47</a>
             </div>
             <div class="stat">
               <b>60</b>
@@ -50,7 +51,7 @@ export function Landing() {
             <div class="stat">
               <b>44.8%</b>
               <p>of Class 5 children in government schools could read that same Class 2 text. More than half of Class 5 children could not.</p>
-              <a href="https://www.millenniumpost.in/big-stories/aser-2024-reading-arithmetic-skills-improve-among-class-3-and-5-students-led-by-govt-schools-596643" target="_blank" rel="noopener">ASER 2024, via Millennium Post</a>
+              <a href="https://asercentre.org/wp-content/uploads/2022/12/ASER-2024-National-findings.pdf" target="_blank" rel="noopener">ASER 2024 national findings, p. 47</a>
             </div>
           </div>
         </div>

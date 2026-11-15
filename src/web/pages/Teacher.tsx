@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'preact/hooks';
 import type { Lang, Level, Passage } from '../../core/passages';
 import type { AserLevel } from '../../core/score';
 import { api, playBase64Wav, type ClassView, type Kind, type ReadResult } from '../api';
-import { LANG_LABEL, LEVEL_LABEL, t } from '../i18n';
+import { LANG_LABEL, LEVEL_LABEL, t, u, getUi, setUi, type Ui } from '../i18n';
 import { Legend, PassageText, RecordButton, ScoreView } from '../components/Reading';
 import { PracticePlan } from '../components/Plan';
 import { go } from '../router';
@@ -16,7 +16,20 @@ function save(v: { code: string; pin: string } | null) {
   try { v ? localStorage.setItem(KEY, JSON.stringify(v)) : localStorage.removeItem(KEY); } catch { /* private mode */ }
 }
 
+function UiSwitch() {
+  const cur = getUi();
+  return (
+    <div class="segmented" role="radiogroup" aria-label="Screen language" style="margin-bottom:16px">
+      {(['en', 'te', 'hi'] as Ui[]).map((l) => <button key={l} role="radio" aria-checked={cur === l} aria-pressed={cur === l} class={l !== 'en' ? 'indic' : ''} onClick={() => setUi(l)}>{LANG_LABEL[l]}</button>)}
+    </div>
+  );
+}
+
 export function TeacherPage({ sub }: { sub: string[] }) {
+  return <><UiSwitch /><TeacherInner sub={sub} /></>;
+}
+
+function TeacherInner({ sub }: { sub: string[] }) {
   const [auth, setAuth] = useState(saved());
   const [cls, setCls] = useState<ClassView | null>(null);
   const [err, setErr] = useState('');
@@ -78,11 +91,11 @@ function SignIn({ onIn, err }: { onIn: (a: { code: string; pin: string }) => voi
 
   return (
     <form class="reader col" style="max-width:520px" onSubmit={submit}>
-      <button type="button" class="btn btn-candy" onClick={() => onIn({ code: 'DEMO01', pin: '0000' })}>See the demo class (no sign-in)</button>
+      <button type="button" class="btn btn-candy" onClick={() => onIn({ code: 'DEMO01', pin: '0000' })}>{u('demo')}</button>
       <p class="t-small">The demo class is read-only. Its children are made up and never counted on the evidence page.</p>
       <div class="segmented">
-        <button type="button" aria-pressed={mode === 'in'} onClick={() => setMode('in')}>Open my class</button>
-        <button type="button" aria-pressed={mode === 'new'} onClick={() => setMode('new')}>Start a new class</button>
+        <button type="button" aria-pressed={mode === 'in'} onClick={() => setMode('in')}>{u('openClass')}</button>
+        <button type="button" aria-pressed={mode === 'new'} onClick={() => setMode('new')}>{u('newClass')}</button>
       </div>
       {mode === 'new' ? (
         <>
@@ -138,13 +151,13 @@ function Dashboard({ cls, auth, reload, onOut }: { cls: ClassView; auth: { code:
       {cls.demo && <div class="note"><strong>Demo class.</strong> These children are made up so you can see the teacher view. It is read-only and excluded from every public number.</div>}
       <div class="app-head">
         <div>
-          <span class="eyebrow"><span class="dot" />Class code <span class="t-mono">{cls.code}</span></span>
+          <span class="eyebrow"><span class="dot" />{u('classCode')} <span class="t-mono">{cls.code}</span></span>
           <h1 style="margin-top:10px">{cls.name}</h1>
         </div>
         <div class="row">
-          {cls.toCheck > 0 && <button class="btn btn-outline" onClick={() => go('/teacher/check')}>Check {cls.toCheck} recording{cls.toCheck > 1 ? 's' : ''}</button>}
-          {!cls.demo && <button class="btn btn-candy" onClick={() => setAdding(true)}>Add a child</button>}
-          <button class="btn btn-ghost btn-sm" onClick={onOut}>Sign out</button>
+          {cls.toCheck > 0 && <button class="btn btn-outline" onClick={() => go('/teacher/check')}>{u('checkRecordings')} ({cls.toCheck})</button>}
+          {!cls.demo && <button class="btn btn-candy" onClick={() => setAdding(true)}>{u('addChild')}</button>}
+          <button class="btn btn-ghost btn-sm" onClick={onOut}>{u('signOut')}</button>
         </div>
       </div>
 
@@ -160,24 +173,24 @@ function Dashboard({ cls, auth, reload, onOut }: { cls: ClassView; auth: { code:
       ) : (
         <div class="table-wrap">
           <table class="table">
-            <thead><tr><th>Child</th><th>Class</th><th>Group</th><th>First check</th><th>Practice days</th><th>Second check</th><th /></tr></thead>
+            <thead><tr><th>{u('child')}</th><th>{u('cls')}</th><th>{u('group')}</th><th>{u('firstCheck')}</th><th>{u('practiceDays')}</th><th>{u('secondCheck')}</th><th /></tr></thead>
             <tbody>
               {rows.map(({ c, pre, post, preW, postW, practice }) => (
                 <tr key={c.id}>
                   <td><strong>{c.nickname}</strong><br /><span class="t-micro indic">{LANG_LABEL[c.lang]}</span></td>
                   <td>{c.grade}</td>
-                  <td><span class={`pill ${c.arm === 'practice' ? 'pill--accent' : ''}`} title={c.arm === 'waitlist' ? 'Practice starts after the second check' : 'Practises between the checks'}>{c.arm === 'practice' ? 'Practice now' : 'Waitlist'}</span></td>
-                  <td>{pre ? <span class="pill">{LEVEL_LABEL[pre.final_level!]}{preW !== null ? ` · ${preW} wcpm` : ''}</span> : <span class="t-micro">Not yet</span>}</td>
+                  <td><span class={`pill ${c.arm === 'practice' ? 'pill--accent' : ''}`} title={c.arm === 'waitlist' ? 'Practice starts after the second check' : 'Practises between the checks'}>{c.arm === 'practice' ? u('practiceNow') : u('waitlist')}</span></td>
+                  <td>{pre ? <span class="pill">{LEVEL_LABEL[pre.final_level!]}{preW !== null ? ` · ${preW} wcpm` : ''}</span> : <span class="t-micro">{u('notYet')}</span>}</td>
                   <td><span class="t-mono">{practice}</span></td>
-                  <td>{post ? <span class={`pill ${ORDER.indexOf(post.final_level!) > ORDER.indexOf(pre?.final_level ?? 'beginner') || (postW ?? 0) > (preW ?? 0) ? 'pill--ok' : ''}`}>{LEVEL_LABEL[post.final_level!]}{postW !== null ? ` · ${postW} wcpm` : ''}</span> : <span class="t-micro">After 7+ days</span>}</td>
+                  <td>{post ? <span class={`pill ${ORDER.indexOf(post.final_level!) > ORDER.indexOf(pre?.final_level ?? 'beginner') || (postW ?? 0) > (preW ?? 0) ? 'pill--ok' : ''}`}>{LEVEL_LABEL[post.final_level!]}{postW !== null ? ` · ${postW} wcpm` : ''}</span> : <span class="t-micro">{u('after7')}</span>}</td>
                   <td style="text-align:right"><div class="row" style="justify-content:flex-end;gap:6px">
-                    {!pre && !cls.demo && <button class="btn btn-ink btn-sm" onClick={() => go(`/teacher/child/${c.id}/pre`)}>First check</button>}
-                    {pre && !cls.demo && (c.arm === 'practice' || post) && <button class="btn btn-outline btn-sm" onClick={() => go(`/teacher/child/${c.id}/practice`)}>Practise</button>}
-                    {pre && !post && !cls.demo && <> <button class="btn btn-ghost btn-sm" disabled={Date.now() - pre.created_at < cls.minGapDays * 86_400_000} title={`Opens ${cls.minGapDays} days after the first check`} onClick={() => go(`/teacher/child/${c.id}/post`)}>Second check</button></>}
+                    {!pre && !cls.demo && <button class="btn btn-ink btn-sm" onClick={() => go(`/teacher/child/${c.id}/pre`)}>{u('firstCheck')}</button>}
+                    {pre && !cls.demo && (c.arm === 'practice' || post) && <button class="btn btn-outline btn-sm" onClick={() => go(`/teacher/child/${c.id}/practice`)}>{u('practise')}</button>}
+                    {pre && !post && !cls.demo && <> <button class="btn btn-ghost btn-sm" disabled={Date.now() - pre.created_at < cls.minGapDays * 86_400_000} title={`Opens ${cls.minGapDays} days after the first check`} onClick={() => go(`/teacher/child/${c.id}/post`)}>{u('secondCheck')}</button></>}
                     {!cls.demo && pre && !post && <> <button class="btn btn-ghost btn-sm" title="Log 10 minutes of adult time today" onClick={async () => { await api.logMinutes(auth.code, auth.pin, c.id, c.arm === 'practice' ? 'practice' : 'storybook', 10); reload(); }}>+10 min {c.arm === 'practice' ? 'practice' : 'storybook'}</button></>}
                     {!cls.demo && (removing === c.id
                       ? <> <button class="btn btn-sm" style="background:var(--miss);color:#fff" onClick={() => remove(c.id)}>Delete all of {c.nickname}'s data</button> <button class="btn btn-ghost btn-sm" onClick={() => setRemoving(null)}>Keep</button></>
-                      : <> <button class="btn btn-ghost btn-sm" title="Parent withdrew consent" onClick={() => setRemoving(c.id)}>Withdraw</button></>)}
+                      : <> <button class="btn btn-ghost btn-sm" title="Parent withdrew consent" onClick={() => setRemoving(c.id)}>{u('withdraw')}</button></>)}
                   </div></td>
                 </tr>
               ))}
@@ -320,8 +333,8 @@ function Assess(p: { cls: ClassView; pin: string; childId: string; nickname: str
             <p class="indic t-title" lang={p.lang}>{t('wellDone', p.lang)}</p>
             <div class="row">
               {next && <button class="btn btn-candy" onClick={() => setLevel(next)}>Next: {LEVEL_LABEL[next]}</button>}
-              {retry && <button class="btn btn-candy" onClick={() => setResult(null)}>Record it once more</button>}
-              <button class="btn btn-outline" onClick={() => setShown(true)}>Show the result (adults)</button>
+              {retry && <button class="btn btn-candy" onClick={() => setResult(null)}>{u('recordAgain')}</button>}
+              <button class="btn btn-outline" onClick={() => setShown(true)}>{u('showResult')}</button>
             </div>
             {retry && <p class="t-small">Padh wasn't sure about that recording, so it doesn't count yet. You can record it once more.</p>}
             {review && <SetLevel p={p} />}
@@ -331,7 +344,7 @@ function Assess(p: { cls: ClassView; pin: string; childId: string; nickname: str
         {result && shown && (
           <div class="row">
             {next && <button class="btn btn-candy" onClick={() => setLevel(next)}>Next: {LEVEL_LABEL[next]}</button>}
-            {retry && <button class="btn btn-candy" onClick={() => setResult(null)}>Record it once more</button>}
+            {retry && <button class="btn btn-candy" onClick={() => setResult(null)}>{u('recordAgain')}</button>}
             {!isCheck && <button class="btn btn-ink" onClick={() => { setResult(null); setShown(false); }}>Read it again</button>}
           </div>
         )}
@@ -342,7 +355,7 @@ function Assess(p: { cls: ClassView; pin: string; childId: string; nickname: str
           <span class="eyebrow"><span class="dot" />Result, for adults</span>
           <h2 style="font-size:clamp(28px,3.4vw,40px)">{p.nickname} reads at the <span class="hl">{LEVEL_LABEL[final].toLowerCase()}</span> level.</h2>
           <p class="t-small">An ASER-style ladder: letters, words, a short paragraph, then a story.</p>
-          <div class="row"><button class="btn btn-ink" onClick={() => { p.onDone(); go('/teacher'); }}>Next child</button></div>
+          <div class="row"><button class="btn btn-ink" onClick={() => { p.onDone(); go('/teacher'); }}>{u('nextChild')}</button></div>
         </div>
       )}
 

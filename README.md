@@ -9,13 +9,16 @@ Padh (पढ़, "read") is a reading check and practice planner for children in
 | Live app | https://padh.padh-read.workers.dev |
 | Evidence, updated live | https://padh.padh-read.workers.dev/#/evidence |
 | Demo video | recorded after filing; link added here |
-| Pilot plan, committed before any data | [docs/pre-registration.md](docs/pre-registration.md) |
+| Pilot plan, committed before any data | [docs/pre-registration.md](docs/pre-registration.md) (tag `prereg-v1`) |
+| Running a pilot day | [docs/pilot-day.md](docs/pilot-day.md) |
 
 **Status, plainly.** The app is complete. No child had used it when this was submitted. The school pilot starts after submission, and its results appear on the evidence page as they come in, including any that disappoint.
 
 ## The problem
 
-- In 2024, 23.4% of Class 3 children in government schools could read a Class 2 text, and 44.8% of Class 5 children could ([ASER 2024, via Millennium Post](https://www.millenniumpost.in/big-stories/aser-2024-reading-arithmetic-skills-improve-among-class-3-and-5-students-led-by-govt-schools-596643)).
+- 10.44 crore children were enrolled in Classes 1 to 5 in 2024-25 ([UDISE+ 2024-25, analysis by Prof. Arun C. Mehta](https://educationforallinindia.com/analysis-of-udise-2024-25-data-by-prof-arun-c-mehta/)).
+- In 2024, 23.4% of Class 3 children in government schools could read a Class 2 text, and 44.8% of Class 5 children could ([ASER 2024 national findings, p. 47](https://asercentre.org/wp-content/uploads/2022/12/ASER-2024-National-findings.pdf)).
+- Two-thirds of Class 1 and 2 classrooms in government primary schools are multigrade, with children from more than one class sitting together ([ASER 2024, p. 49](https://asercentre.org/wp-content/uploads/2022/12/ASER-2024-National-findings.pdf)). One teacher, several classes at once: listening to each child read is the first thing to go.
 - NIPUN Bharat sets 45 to 60 words correct per minute for Class 2 and at least 60 by the end of Class 3 ([NIPUN Bharat targets](https://en.vikaspedia.in/education/policies-and-schemes/nipun-bharat-programme)).
 
 The only way to know where a child stands is to listen to them read, word by word, with a stopwatch. A teacher with forty children rarely has the time, so a child stuck on ళ్ళ or स्कू stays stuck.
@@ -59,7 +62,11 @@ Vaachan Samiksha (Gujarat) and IIT Bombay's TARA assess oral reading in schools.
 
 ### Built in AgentFoundry
 
-The practice writer is an AgentFoundry agent, with its manifest, prompt and a 13-case eval suite in `.codenow/agent-studio/`. Production uses the same prompt file, and a test fails if they drift apart. See [agentfoundry/README.md](agentfoundry/README.md).
+The practice writer is an AgentFoundry agent, with its manifest, prompt and a 13-case eval suite in `.codenow/agent-studio/`. The latest run passed 13 of 13 against the production model (a local script run, labelled as such in the result file). Production uses the same prompt file, and a test fails if they drift apart. See [agentfoundry/README.md](agentfoundry/README.md).
+
+## Cost and scale
+
+Speech is the only cost. ElevenLabs Scribe charges $0.20 per hour of audio ([price list](https://elevenlabs.io/pricing/api)). A full check is two or three readings, about two minutes of audio, so roughly $0.007 per child, and a one-minute practice reading is about $0.003. Hosting, the database and practice drafting run on Cloudflare's free tier during the pilot. The scoring code itself costs nothing per child, and a new language needs passages and a word list rather than new code. The next step is an offline mode that records without a connection and scores later, for schools with patchy data.
 
 ## Accuracy so far (computer voice, not children)
 
