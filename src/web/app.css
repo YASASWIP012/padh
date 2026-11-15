@@ -1,0 +1,128 @@
+/* Brand layer on top of the foundation: Code for India's paper, navy ink and saffron. */
+[data-mood="cream"]{
+  --bg:#FAF6EE; --bg-alt:#F3ECDF; --surface:#FFFEFB; --surface-2:#FBF7F0;
+  --ink:#0E173B; --ink-2:#2F3756; --ink-3:#545B74; --ink-4:#7D8296;
+  --line:#E7DFD1; --line-2:#D9CDBA; --tint:rgba(14,23,59,.05); --shadow-rgb:14 23 59;
+  --font-display:"Space Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-body:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --display-weight:600; --display-track:-.035em;
+  --wallpaper:radial-gradient(120% 90% at 50% -20%,#FFF1DF 0%,#FBC48E 42%,#E57A2E 100%);
+  --wallpaper-soft:radial-gradient(120% 90% at 50% -20%,#FFFDF8 0%,#F6E8D3 55%,#EBD4B4 100%);
+}
+[data-accent="saffron"]{--accent:#FA8927;--accent-hi:#FFAD62;--accent-ink:#A24D06;--on-accent:#1B0D00}
+:root{
+  --green:#187E36; --green-wash:#E3F2E6;
+  --miss:#B42318; --miss-wash:#FDECEA;
+  --skip:#8A6A00; --skip-wash:#FFF4CC;
+  --font-indic:"Noto Sans Telugu","Noto Sans Devanagari","DM Sans",sans-serif;
+  --tricolor:linear-gradient(90deg,#FA8927 0 33.3%,#FFFDF8 33.3% 66.6%,#187E36 66.6%);
+}
+.indic,[lang="te"],[lang="hi"]{font-family:var(--font-indic)}
+.tricolor{height:3px;background:var(--tricolor);border-radius:3px}
+
+/* ---------- App shell ---------- */
+.app-main{min-height:100vh;padding-top:96px;padding-bottom:64px}
+.app-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:28px}
+.app-head h1{font-size:clamp(32px,4.4vw,48px)}
+.back{display:inline-flex;align-items:center;gap:6px;margin-bottom:14px;font-size:14px;color:var(--ink-3)}
+.back:hover{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.col{display:grid;gap:14px}
+.field{display:grid;gap:6px}
+.field label{font-size:13.5px;font-weight:600;color:var(--ink-2)}
+.input{height:46px;padding:0 14px;border:0;border-radius:var(--r-md);background:var(--surface);box-shadow:inset 0 0 0 1px var(--line-2);font:inherit;color:var(--ink);width:100%}
+.input:focus{outline:2px solid var(--focus);outline-offset:1px}
+select.input{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink-3) 50%),linear-gradient(135deg,var(--ink-3) 50%,transparent 50%);background-position:calc(100% - 18px) 20px,calc(100% - 13px) 20px;background-size:5px 5px;background-repeat:no-repeat}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:15px;color:var(--ink-2);cursor:pointer}
+.check input{width:20px;height:20px;margin-top:2px;accent-color:var(--accent-ink)}
+.error{padding:12px 14px;border-radius:var(--r-md);background:var(--miss-wash);color:var(--miss);font-size:14.5px}
+.note{padding:12px 14px;border-radius:var(--r-md);background:var(--accent-wash);color:var(--ink-2);font-size:14.5px}
+.muted-box{padding:14px 16px;border-radius:var(--r-md);background:var(--sunk);font-size:14.5px;color:var(--ink-3)}
+.kpi{display:grid;gap:4px}
+.kpi b{font:var(--display-weight) clamp(30px,3.6vw,44px)/1 var(--font-display);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.kpi span{font-size:14px;color:var(--ink-3)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:900px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.table{width:100%;border-collapse:collapse;font-size:14.5px}
+.table th{text-align:left;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);padding:10px 12px;border-bottom:1px solid var(--line)}
+.table td{padding:12px;border-bottom:1px solid var(--line);vertical-align:middle}
+.table-wrap{overflow-x:auto;border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--ring)}
+.pill{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:var(--r-pill);font-size:12.5px;font-weight:600;background:var(--tint);color:var(--ink-2);white-space:nowrap}
+.pill--ok{background:var(--green-wash);color:var(--green)}
+.pill--warn{background:var(--skip-wash);color:var(--skip)}
+.pill--accent{background:var(--accent-wash);color:var(--accent-ink)}
+
+/* ---------- The reading card ---------- */
+.reader{padding:clamp(22px,3vw,36px);border-radius:var(--r-xl);background:var(--surface);box-shadow:var(--shadow-2)}
+.passage{font-family:var(--font-indic);font-size:clamp(24px,3.2vw,34px);line-height:1.75;letter-spacing:.005em;color:var(--ink);text-wrap:pretty}
+.passage--grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;text-align:center}
+.passage--grid span{padding:14px 4px;border-radius:var(--r-md);background:var(--surface-2);box-shadow:var(--ring)}
+.passage--en{font-family:var(--font-body)}
+.w{display:inline;padding:2px 3px;margin:0 1px;border-radius:6px;transition:background-color var(--dur-ui) var(--ease-out),color var(--dur-ui)}
+.w--correct{background:var(--green-wash);color:var(--green)}
+.w--substitution{background:var(--miss-wash);color:var(--miss);text-decoration:underline wavy color-mix(in oklab,var(--miss) 60%,transparent);text-underline-offset:6px}
+.w--omission{background:var(--skip-wash);color:var(--skip);text-decoration:line-through}
+.w--not_reached{color:var(--ink-3)}
+.w button{all:unset;cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13.5px;color:var(--ink-3)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:6px;vertical-align:-1px}
+
+.mic{position:relative;display:grid;place-items:center;width:96px;height:96px;border:0;border-radius:50%;cursor:pointer;color:var(--on-accent);background:linear-gradient(135deg,var(--accent-hi),var(--accent) 60%,color-mix(in oklab,var(--accent) 86%,#000));box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 0 1px color-mix(in oklab,var(--accent-ink) 40%,transparent),0 14px 30px -10px color-mix(in oklab,var(--accent-ink) 80%,transparent);transition:transform var(--dur-press) var(--ease-spring)}
+.mic:active{transform:scale(.96)}
+.mic svg{width:34px;height:34px}
+.mic--on{background:var(--ink);color:var(--bg)}
+.mic--on::before{content:"";position:absolute;inset:-10px;border-radius:50%;box-shadow:0 0 0 2px var(--accent);animation:pulse 1.6s var(--ease-out) infinite}
+@keyframes pulse{0%{transform:scale(.9);opacity:1}100%{transform:scale(1.25);opacity:0}}
+.meter{display:flex;align-items:center;gap:3px;height:40px}
+.meter i{width:4px;border-radius:2px;background:var(--accent);transition:height .08s linear}
+.timer{font:500 15px/1 var(--font-mono);color:var(--ink-3);font-variant-numeric:tabular-nums}
+
+.score-hero{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:640px){.score-hero{grid-template-columns:1fr}}
+.score-tile{padding:18px;border-radius:var(--r-lg);background:var(--surface-2);box-shadow:var(--ring)}
+.score-tile b{display:block;font:var(--display-weight) 38px/1 var(--font-display);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.score-tile span{display:block;margin-top:6px;font-size:13.5px;color:var(--ink-3)}
+.bar{position:relative;height:10px;border-radius:99px;background:var(--tint);overflow:hidden;margin-top:10px}
+.bar>i{position:absolute;inset:0 auto 0 0;border-radius:99px;background:var(--accent)}
+.bar>em{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--green)}
+
+.ladder{display:flex;gap:6px;flex-wrap:wrap}
+.ladder span{flex:1 1 0;min-width:72px;padding:10px 8px;border-radius:var(--r-md);text-align:center;font-size:13px;font-weight:600;background:var(--tint);color:var(--ink-3)}
+.ladder span.on{background:var(--accent);color:var(--on-accent)}
+.ladder span.done{background:var(--green-wash);color:var(--green)}
+
+.aks{display:flex;flex-wrap:wrap;gap:8px}
+.aks span{display:grid;place-items:center;min-width:56px;height:56px;padding:0 10px;border-radius:var(--r-md);font:600 26px/1 var(--font-indic);background:var(--accent-wash);color:var(--accent-ink);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--accent) 30%,transparent)}
+.steps{display:grid;gap:10px;counter-reset:s}
+.step{display:grid;grid-template-columns:36px 1fr auto;gap:14px;align-items:start;padding:16px;border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--ring)}
+.step::before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--ink);color:var(--bg);font-weight:650;font-size:14px}
+.step .indic{font-size:20px;line-height:1.7}
+.heat{display:flex;flex-wrap:wrap;gap:6px}
+.heat span{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:var(--r-sm);font:600 18px/1 var(--font-indic)}
+.heat small{font:600 12px/1 var(--font-body);opacity:.8}
+
+/* ---------- Landing specifics ---------- */
+.hero-cream{background:linear-gradient(180deg,var(--bg) 0%,var(--bg-alt) 100%)}
+.statline{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:760px){.statline{grid-template-columns:1fr}}
+.stat{padding:24px;border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--ring)}
+.stat b{display:block;font:var(--display-weight) clamp(40px,5vw,60px)/1 var(--font-display);letter-spacing:-.04em}
+.stat p{margin-top:10px;font-size:15px;color:var(--ink-2)}
+.stat a{display:inline-block;margin-top:10px;font-size:13px;color:var(--ink-3);text-decoration:underline;text-underline-offset:3px}
+.src{font-size:13px;color:var(--ink-3);text-decoration:underline;text-underline-offset:3px}
+.brandmark{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--ink);color:#fff;font:700 15px/1 var(--font-indic)}
+.brandmark::after{content:"";position:absolute}
+.footer .tricolor{width:48px}
+
+/* Hero: the live reader is the product, so it gets the wider column. */
+.hero--split .container{grid-template-columns:.85fr 1.15fr;align-items:start}
+.hero--split .container>div:first-child{padding-top:clamp(12px,4vw,56px)}
+.stage .reader{padding:22px}
+.stage .passage{font-size:clamp(20px,1.9vw,26px);line-height:1.7}
+.stage .segmented button{padding:0 14px}
+.stage .mic{width:80px;height:80px}
+
+/* Tappable words reset their styles; give keyboard users their focus ring back. */
+.passage button:focus-visible,.w button:focus-visible{outline:2px solid var(--focus)!important;outline-offset:2px!important;border-radius:6px}
+
+.hero--split h1{font-size:clamp(38px,4.4vw,58px)}

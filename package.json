@@ -1,0 +1,33 @@
+{
+  "name": "padh",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "dev:api": "wrangler dev --port 8787",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "db:local": "wrangler d1 execute padh --local --file=schema.sql",
+    "deploy": "vite build && wrangler deploy"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "hono": "^4.13.18",
+    "preact": "^11.2.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261115.1",
+    "@preact/preset-vite": "^2.10.6",
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0",
+    "wrangler": "^4.162.0"
+  }
+}

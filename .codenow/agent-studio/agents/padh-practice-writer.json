@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "function": "other",
+  "version": "0.1.0",
+  "builtBy": "Padh",
+  "runsAt": "Cloudflare Workers",
+  "authMode": "none",
+  "price": "free",
+  "origin": "built",
+  "lifecycle": "pilot",
+  "kit": "custom",
+  "createdAt": 1794725538382,
+  "updatedAt": 1794725538382,
+  "memoryConfig": {
+    "enabled": false
+  },
+  "slug": "padh-practice-writer",
+  "name": "Padh practice writer",
+  "description": "Drafts a short practice text in Telugu, Hindi or English around the aksharas a child misread. Code picks the targets and code checks every draft (script, length, familiar words, target coverage) before a child sees it.",
+  "tags": [
+    "education",
+    "reading",
+    "india",
+    "multilingual",
+    "foundational-literacy"
+  ],
+  "prompts": [
+    "padh-practice-writer"
+  ],
+  "evals": [
+    "padh-practice-writer"
+  ],
+  "tools": [],
+  "dataAccess": [
+    "target words and aksharas chosen by the scoring engine",
+    "the passage bank"
+  ],
+  "guardrails": {
+    "dataAccess": [
+      "no child data: only target words reach the model"
+    ],
+    "actions": [
+      "text only; every draft is checked in code before use"
+    ],
+    "requireApprovalForWrites": false
+  }
+}
