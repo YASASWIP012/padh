@@ -1,6 +1,7 @@
 import type { Lang, Level } from '../core/passages';
 import type { PracticeTargets } from '../core/practice';
 import { PRACTICE_SYSTEM } from './prompt';
+import { lengthRange } from '../core/practice';
 
 const LANG_NAME: Record<Lang, string> = { te: 'Telugu', hi: 'Hindi', en: 'English' };
 
@@ -19,7 +20,8 @@ export function modelReady(env: LlmEnv): boolean {
 
 /** The request in the same shape the AgentFoundry eval cases use. Only target words reach the model, never child data. */
 export function draftPrompt(lang: Lang, level: Level, t: PracticeTargets, exampleText: string, feedback?: string[], avoid: string[] = []): string {
-  const range = level === 'story' ? '35 to 50' : level === 'word' ? '10 to 16' : '25 to 35';
+  const [lo, hi] = lengthRange(lang, level);
+  const range = `${lo + 5} to ${hi - 10}`;
   return [
     `Language: ${LANG_NAME[lang]}.${level === 'story' ? ' Write a story.' : level === 'word' ? ' Write only 2 or 3 very short sentences.' : ''}`,
     `Use between ${range} words.`,

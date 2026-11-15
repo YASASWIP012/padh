@@ -99,6 +99,30 @@
       "expected_any_contains": [
         "only write reading practice"
       ]
+    },
+    {
+      "name": "telugu: story uses the target aksharas' words",
+      "input": "Language: Telugu. Write a story. Use between 20 and 35 words. Target words: కుక్క, బల్ల. Target aksharas: క్క, ల్ల. Write a practice text.",
+      "expected_any_contains": [
+        "కుక్క",
+        "బల్ల"
+      ]
+    },
+    {
+      "name": "hindi: respects the word range request",
+      "input": "Language: Hindi. Use between 30 and 50 words. Target words: बच्चा, कुत्ता. Target aksharas: च्चा, त्ता. Write a practice text.",
+      "expected_any_contains": [
+        "बच्चा",
+        "कुत्ता"
+      ]
+    },
+    {
+      "name": "avoids a banned word but keeps the target",
+      "input": "Language: English. Use between 25 and 35 words. Target words: ship, fish. Do not use these words: hut, roof. Write a practice text.",
+      "expected_any_contains": [
+        "ship",
+        "fish"
+      ]
     }
   ]
 }

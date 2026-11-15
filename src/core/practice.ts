@@ -101,12 +101,37 @@ const SCRIPT: Record<Lang, RegExp> = {
   en: /^[a-z]+$/,
 };
 
-const LENGTH: Record<Level, [number, number]> = {
-  letter: [20, 40],
-  word: [8, 18],
-  para: [20, 40],
-  story: [25, 60],
+// Word-count bounds per language. Telugu words carry their endings, so the same story has far fewer words.
+const LENGTH: Record<Lang, Record<Level, [number, number]>> = {
+  en: { letter: [20, 40], word: [8, 18], para: [20, 40], story: [25, 60] },
+  hi: { letter: [20, 40], word: [8, 18], para: [20, 40], story: [25, 60] },
+  te: { letter: [12, 30], word: [6, 14], para: [12, 30], story: [15, 45] },
 };
+
+export function lengthRange(lang: Lang, level: Level): [number, number] {
+  return LENGTH[lang][level];
+}
+
+/**
+ * When no draft passes, build practice from the passage bank: sentences that contain the child's
+ * target aksharas come first, so the fallback is still about this child's mistakes.
+ */
+export function bankPractice(texts: string[], lang: Lang, targets: PracticeTargets, level: Level): string {
+  const sentences = texts.flatMap((t) => t.split(/(?<=[.!?\u0964])\s+/)).filter(Boolean);
+  const score = (s: string) => tokenize(s, lang).filter((w) => targets.aksharas.some((ak) => aksharas(w, lang).includes(ak))).length;
+  const ranked = [...new Set(sentences)].sort((a, b) => score(b) - score(a));
+  const [, hi] = LENGTH[lang][level];
+  const out: string[] = [];
+  let words = 0;
+  for (const s of ranked) {
+    const n = tokenize(s, lang).length;
+    if (words + n > hi) continue;
+    out.push(s);
+    words += n;
+    if (words >= LENGTH[lang][level][0] && out.length >= 3) break;
+  }
+  return out.join(' ');
+}
 
 export interface Check {
   ok: boolean;
@@ -126,7 +151,7 @@ export function checkPracticeText(text: string, lang: Lang, level: Level, target
   const tokens = tokenize(text, lang);
   const fromTest = [...new Set(tokens.filter((t) => testWords.has(t)))];
   if (fromTest.length) problems.push(`uses words from the check passages: ${fromTest.slice(0, 4).join(' ')}`);
-  const [lo, hi] = LENGTH[level];
+  const [lo, hi] = LENGTH[lang][level];
   if (tokens.length < lo || tokens.length > hi) problems.push(`length ${tokens.length} not in ${lo}-${hi}`);
   const wrongScript = tokens.filter((t) => !SCRIPT[lang].test(t));
   if (wrongScript.length) problems.push(`wrong script: ${wrongScript.slice(0, 3).join(' ')}`);

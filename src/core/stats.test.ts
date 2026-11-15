@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { pearson, icc21, cohenKappa, bootstrapMeanCI, bootstrapDiffCI, mean, median } from './stats';
 import { speechSpan } from './vad';
-import { pickTargets, checkPracticeText } from './practice';
+import { pickTargets, checkPracticeText, bankPractice } from './practice';
 
 describe('stats', () => {
   it('pearson is 1 for a perfect line', () => {
@@ -62,6 +62,17 @@ describe('practice', () => {
   it('prefers an akshara missed every time over a common one missed now and then', () => {
     const t = pickTargets([{ missed: { a: 3, q: 2 }, exposed: { a: 30, q: 2 } }], 'en', ['quit', 'ant'], 1);
     expect(t.aksharas).toEqual(['q']);
+  });
+  it('accepts a Telugu practice text of normal Telugu length', () => {
+    const t = 'నక్క బల్ల పైన పడుకుంది. చుక్క పడితే మొక్క పెరుగుతుంది. బల్ల పైన నక్క ఉంది. మొక్క చుక్క తాగుతుంది. నక్క బల్ల క్రింద పడుకుంది.';
+    const targets = { aksharas: ['క్క', 'ల్ల'], words: ['నక్క', 'బల్ల', 'చుక్క', 'మొక్క'] };
+    const known = new Set(t.replace(/[.]/g, '').split(/\s+/));
+    const c = checkPracticeText(t, 'te', 'story', targets, known);
+    expect(c.problems.filter((p) => p.startsWith('length'))).toEqual([]);
+  });
+  it('builds bank practice around the target aksharas', () => {
+    const out = bankPractice(['The cat sat. A ship came in. The fish swam. We ran home. A shop was open.'], 'en', { aksharas: ['h'], words: [] }, 'para');
+    expect(out.startsWith('A ship') || out.startsWith('The fish') || out.startsWith('A shop')).toBe(true);
   });
   it('rejects a practice text that reuses words from the check passages', () => {
     const targets = { aksharas: ['h'], words: ['ship', 'fish'] };

@@ -27,6 +27,6 @@ for (const c of suite.cases) {
 }
 const stamp = new Date().toISOString().replace(/[:.]/g, '-');
 mkdirSync('.codenow/agent-studio/evals/results', { recursive: true });
-const out = { eval: suite.name, runner: 'local script (scripts/run-evals.ts), not the AgentFoundry IDE', model, timestamp: started, totalMs: Date.now() - started, passed: cases.filter((c) => c.pass).length, total: cases.length, cases };
+const out = { eval: suite.name, runner: 'local script (scripts/run-evals.mts), not the AgentFoundry IDE', model, timestamp: started, totalMs: Date.now() - started, passed: cases.filter((c) => c.pass).length, total: cases.length, cases };
 writeFileSync(`.codenow/agent-studio/evals/results/${suite.name}-local-${stamp}.json`, JSON.stringify(out, null, 2));
 console.log(`${out.passed}/${out.total} passed`);

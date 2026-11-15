@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { getPassage, PASSAGES, WORD_BANK, type Form, type Lang, type Level } from '../core/passages';
 import { scoreReading, nextStep } from '../core/score';
-import { pickTargets, buildPlan, checkPracticeText, type PlanLevel, type ReadingTrace } from '../core/practice';
+import { pickTargets, buildPlan, checkPracticeText, bankPractice, type PlanLevel, type ReadingTrace } from '../core/practice';
 import { normalizeWord, tokenize } from '../core/text';
 import { transcribe, speak, speechReady, type SpeechEnv } from './speech';
 import { draftPrompt, draftText, modelReady, type LlmEnv } from './llm';
@@ -21,8 +21,8 @@ const LANGS: Lang[] = ['te', 'hi', 'en'];
 /** Short words every text needs. They never count as rehearsing a check passage. */
 const FUNCTION_WORDS: Record<Lang, string[]> = {
   en: ['a', 'an', 'the', 'and', 'but', 'or', 'in', 'on', 'at', 'to', 'of', 'with', 'for', 'from', 'up', 'is', 'are', 'was', 'were', 'be', 'it', 'he', 'she', 'we', 'they', 'i', 'you', 'his', 'her', 'their', 'our', 'my', 'has', 'have', 'had', 'do', 'did', 'not', 'no', 'yes', 'this', 'that', 'there', 'then', 'very', 'all', 'too', 'so', 'run', 'sun', 'play', 'happy', 'big', 'little', 'day', 'go', 'went'],
-  hi: ['और', 'है', 'हैं', 'था', 'थी', 'थे', 'में', 'से', 'को', 'का', 'की', 'के', 'पर', 'ने', 'भी', 'तो', 'वह', 'वे', 'यह', 'हम', 'मैं', 'एक', 'बहुत', 'नहीं', 'जाता', 'जाती', 'गया', 'गई', 'रहा', 'रही', 'साथ'],
-  te: ['ఒక', 'మరియు', 'కూడా', 'చాలా', 'లో', 'ఉంది', 'ఉన్నాడు', 'ఉన్నారు', 'వచ్చింది', 'వెళ్ళింది', 'అతను', 'ఆమె', 'వాళ్ళు', 'మేము', 'నేను', 'అది', 'ఇది', 'కాదు', 'లేదు', 'రోజూ', 'అక్కడ', 'ఇక్కడ'],
+  hi: ['बैठ', 'बैठा', 'बैठी', 'पास', 'नीचे', 'ऊपर', 'अंदर', 'बाहर', 'और', 'है', 'हैं', 'था', 'थी', 'थे', 'में', 'से', 'को', 'का', 'की', 'के', 'पर', 'ने', 'भी', 'तो', 'वह', 'वे', 'यह', 'हम', 'मैं', 'एक', 'बहुत', 'नहीं', 'जाता', 'जाती', 'गया', 'गई', 'रहा', 'रही', 'साथ'],
+  te: ['మీద', 'పైన', 'కింద', 'దగ్గర', 'లోపల', 'బయట', 'ఒక', 'మరియు', 'కూడా', 'చాలా', 'లో', 'ఉంది', 'ఉన్నాడు', 'ఉన్నారు', 'వచ్చింది', 'వెళ్ళింది', 'అతను', 'ఆమె', 'వాళ్ళు', 'మేము', 'నేను', 'అది', 'ఇది', 'కాదు', 'లేదు', 'రోజూ', 'అక్కడ', 'ఇక్కడ'],
 };
 const LEVELS: Level[] = ['letter', 'word', 'para', 'story'];
 const now = () => Date.now();
@@ -288,7 +288,9 @@ app.post('/api/plan', async (c) => {
   const practiceLevel: Level = level === 'word' ? 'word' : 'story';
   const sample = getPassage(lang, practiceLevel === 'word' ? 'para' : 'story', 'C');
 
-  let text = practiceLevel === 'word' ? sample.text.split(/(?<=[.!?।])\s+/).slice(0, 2).join(' ') : sample.text;
+  // Fallback: bank sentences that contain this child's target aksharas, never words only in the check passages.
+  const bankTexts = PASSAGES.filter((p) => p.lang === lang && p.form === 'C' && (p.level === 'para' || p.level === 'story')).map((p) => p.text);
+  let text = bankPractice(bankTexts, lang, bankTargets, practiceLevel) || sample.text;
   let source: 'drafted' | 'bank' = 'bank';
   let feedback: string[] | undefined;
   for (let attempt = 0; attempt < 3 && modelReady(c.env); attempt++) {

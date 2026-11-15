@@ -38,6 +38,8 @@ export async function computeImpact(db: D1Database) {
   const act = (await db.prepare(`SELECT ch.arm AS arm, a.kind AS kind, SUM(a.minutes) AS m, COUNT(DISTINCT a.child_id) AS kids FROM activity a JOIN children ch ON ch.id = a.child_id JOIN classes cl ON cl.id = ch.class_id AND cl.is_demo = 0 GROUP BY ch.arm, a.kind`).all<{ arm: string; kind: string; m: number; kids: number }>()).results;
   const activity = act.map((r) => ({ group: r.arm === 'waitlist' ? 'comparison' : 'practice', kind: r.kind, minutes: r.m, children: r.kids }));
 
+  const draftsByLang = (await db.prepare('SELECT lang, COUNT(*) AS total, SUM(ok) AS passed FROM drafts GROUP BY lang').all<{ lang: string; total: number; passed: number }>()).results;
+
   const byChild = new Map<string, Row[]>();
   for (const r of rows) byChild.set(r.child_id, [...(byChild.get(r.child_id) ?? []), r]);
 
@@ -166,6 +168,6 @@ export async function computeImpact(db: D1Database) {
     // Headline agreement uses only recordings picked at random; flagged ones are reported apart.
     agreement: random,
     agreementFlagged: flaggedAgreement,
-    practiceDrafts: { total: counts?.drafts ?? 0, passedChecker: counts?.draftsOk ?? 0 },
+    practiceDrafts: { total: counts?.drafts ?? 0, passedChecker: counts?.draftsOk ?? 0, byLang: draftsByLang },
   };
 }

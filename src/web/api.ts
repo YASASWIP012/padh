@@ -69,7 +69,7 @@ export interface Impact {
   byGroup: { practice: GroupStats; waitlist: GroupStats; difference: number | null; differenceCi95: [number, number] | null; minutes: { group: string; kind: string; minutes: number; children: number }[] };
   agreement: Agreement;
   agreementFlagged: Agreement;
-  practiceDrafts: { total: number; passedChecker: number };
+  practiceDrafts: { total: number; passedChecker: number; byLang: { lang: string; total: number; passed: number }[] };
 }
 
 export interface Agreement { recordings: number; words: number; wordAgreement: number | null; kappa: number | null; errorRecall: number | null; errorPrecision: number | null; iccPerMinute: number | null; bias: number | null; limits: [number, number] | null }

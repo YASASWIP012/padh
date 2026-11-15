@@ -17,7 +17,7 @@ Padh is a reading check and practice planner that runs in any browser.
 - **Evidence.** The live evidence page reports group gains with bootstrap intervals, the group difference, kappa, error recall and precision, ICC and Bland-Altman figures. Until there is data, it says "waiting".
 - **Safeguarding.** Nickname only. Signed parent consent in three languages, naming the processors. Withdraw-and-delete. Most audio is discarded right after scoring.
 
-How I used AgentFoundry: the project is an AgentFoundry project (`.codenow/agent-studio/`) with the practice-writer agent's manifest, prompt and a 13-case eval suite covering target words in three languages and refusals. Production uses the same prompt file, and a test fails if they drift apart.
+How I used AgentFoundry: the project is an AgentFoundry project (`.codenow/agent-studio/`) with the practice-writer agent's manifest, prompt and a 16-case eval suite covering target words in three languages and refusals. Production uses the same prompt file, and a test fails if they drift apart.
 
 Stack: Cloudflare Workers + D1, ElevenLabs Scribe for speech, Cloudflare Workers AI for drafts, Preact. 57 unit tests, CI on every push.
 

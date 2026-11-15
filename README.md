@@ -62,7 +62,7 @@ Vaachan Samiksha (Gujarat) and IIT Bombay's TARA assess oral reading in schools.
 
 ### Built in AgentFoundry
 
-The practice writer is an AgentFoundry agent, with its manifest, prompt and a 13-case eval suite in `.codenow/agent-studio/`. The latest run passed 13 of 13 against the production model (a local script run, labelled as such in the result file). Production uses the same prompt file, and a test fails if they drift apart. See [agentfoundry/README.md](agentfoundry/README.md).
+The practice writer is an AgentFoundry agent, with its manifest, prompt and a 16-case eval suite in `.codenow/agent-studio/`. The latest run passed 16 of 16 against the production model (a local script run, labelled as such in the result file). Production uses the same prompt file, and a test fails if they drift apart. See [agentfoundry/README.md](agentfoundry/README.md).
 
 ## Cost and scale
 
