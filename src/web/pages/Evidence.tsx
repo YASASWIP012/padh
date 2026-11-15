@@ -127,12 +127,12 @@ export function EvidencePage() {
         <h3>A model drafts each practice text, and code decides if a child sees it.</h3>
         <p class="t-small">Every draft is checked in code: right script, right length, mostly familiar words, no word that appears only in the check passages, and enough practice of the target letters. Rejected drafts are logged and never shown to a child. When every draft for a plan fails, the child gets a passage from the matched bank instead, built from the bank sentences that contain the child's target letters. Pass rates by language are below.</p>
         <div class="kpis">
-          <Kpi value={d.practiceDrafts.total || null} label="drafts written" waiting="Starts with the first practice plan" />
-          <Kpi value={d.practiceDrafts.total ? d.practiceDrafts.passedChecker : null} label="passed every check" waiting="" />
+          <Kpi value={d.practiceDrafts.total || null} label="drafts written, all time" waiting="Starts with the first practice plan" />
+          <Kpi value={d.practiceDrafts.total ? d.practiceDrafts.passedChecker : null} label="passed every check, all time" waiting="" />
           <Kpi value={d.publicTries} label="readings by visitors on the try page (not counted above)" waiting="" />
         </div>
         <div class="kpis">
-          {d.practiceDrafts.byLang.map((l) => <Kpi key={l.lang} value={`${l.passed}/${l.total}`} label={`${l.lang === 'te' ? 'Telugu' : l.lang === 'hi' ? 'Hindi' : 'English'} drafts that passed`} waiting="" />)}
+          {d.practiceDrafts.byLang.map((l) => <Kpi key={l.lang} value={`${l.passed}/${l.total}`} label={`${l.lang === 'te' ? 'Telugu' : l.lang === 'hi' ? 'Hindi' : 'English'} drafts that passed, under the current rules`} waiting="" />)}
         </div>
       </section>
     </div>

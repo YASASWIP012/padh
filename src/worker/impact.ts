@@ -38,7 +38,9 @@ export async function computeImpact(db: D1Database) {
   const act = (await db.prepare(`SELECT ch.arm AS arm, a.kind AS kind, SUM(a.minutes) AS m, COUNT(DISTINCT a.child_id) AS kids FROM activity a JOIN children ch ON ch.id = a.child_id JOIN classes cl ON cl.id = ch.class_id AND cl.is_demo = 0 GROUP BY ch.arm, a.kind`).all<{ arm: string; kind: string; m: number; kids: number }>()).results;
   const activity = act.map((r) => ({ group: r.arm === 'waitlist' ? 'comparison' : 'practice', kind: r.kind, minutes: r.m, children: r.kids }));
 
-  const draftsByLang = (await db.prepare('SELECT lang, COUNT(*) AS total, SUM(ok) AS passed FROM drafts GROUP BY lang').all<{ lang: string; total: number; passed: number }>()).results;
+  // Drafts made under the checker's current rules (changed 15 Nov 2026 21:43 IST); older ones are counted in the all-time totals.
+  const CHECKER_RULES_SINCE = 1794759209673;
+  const draftsByLang = (await db.prepare('SELECT lang, COUNT(*) AS total, SUM(ok) AS passed FROM drafts WHERE created_at >= ? GROUP BY lang').bind(CHECKER_RULES_SINCE).all<{ lang: string; total: number; passed: number }>()).results;
 
   const byChild = new Map<string, Row[]>();
   for (const r of rows) byChild.set(r.child_id, [...(byChild.get(r.child_id) ?? []), r]);
