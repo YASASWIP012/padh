@@ -115,7 +115,8 @@ select.input{appearance:none;background-image:linear-gradient(45deg,transparent 
 .footer .tricolor{width:48px}
 
 /* Hero: the live reader is the product, so it gets the wider column. */
-.hero--split .container{grid-template-columns:.85fr 1.15fr;align-items:start}
+@media (min-width:901px){.hero--split .container{grid-template-columns:.85fr 1.15fr;align-items:start}}
+.hero--split .container{align-items:start}
 .hero--split .container>div:first-child{padding-top:clamp(12px,4vw,56px)}
 .stage .reader{padding:22px}
 .stage .passage{font-size:clamp(20px,1.9vw,26px);line-height:1.7}

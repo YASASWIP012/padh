@@ -15,14 +15,14 @@ export function Landing() {
       <section class="hero hero--split hero-cream" style="padding-bottom:var(--section-y)">
         <div class="container">
           <div>
-            <span class="badge"><span class="badge__tag">Pilot</span>Free, open source · school pilot being set up</span>
+            <span class="badge"><span class="badge__tag">Pilot</span>Free and open source</span>
             <h1 style="margin-top:22px">Hear a child read. Find the <span class="hl">exact letters</span> they stumble on.</h1>
             <p class="lead" style="margin-top:22px">Three in four Class 3 children in government schools can't yet read a Class 2 story. Padh listens to a child read for one minute on any phone, marks every word, finds the letters they stumble on, and plans ten minutes of practice for tomorrow.</p>
             <div class="cta-row">
               <button class="btn btn-candy btn-lg" onClick={() => document.getElementById('try')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>Try it now</button>
               <a class="btn btn-outline btn-lg" href="#/teacher">For teachers</a>
             </div>
-            <div class="trust"><span>Telugu, Hindi, English</span><span>Nickname only, no child's name stored</span><span><a href="#/evidence" style="text-decoration:underline;text-underline-offset:3px">Every number public</a></span></div>
+            <div class="trust"><span>Telugu, Hindi, English</span><span>We ask for a nickname, never a full name</span><span><a href="#/evidence" style="text-decoration:underline;text-underline-offset:3px">Every number public</a></span></div>
           </div>
           <div class="stage" id="try" style="scroll-margin-top:96px">
             <TryPage embedded initialLang="en" />
